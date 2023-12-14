@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "Components/CapsuleComponent.h"
 #include "Bird.generated.h"
+
+class UCapsuleComponent;
+class USkeletalMeshComponent;
 
 UCLASS()
 class SLASH_API ABird : public APawn
@@ -21,9 +23,12 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	void MoveForward(float Value);
 
 private:
 	UPROPERTY(VisibleAnywhere)
 	UCapsuleComponent* Capsule;
 
+	UPROPERTY(VisibleAnywhere)
+	USkeletalMeshComponent* BirdMesh;
 };
