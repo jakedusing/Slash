@@ -47,6 +47,8 @@ void ASlashCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Tags.Add(FName("SlashCharacter"));
+
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController)
 	{

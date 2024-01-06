@@ -115,8 +115,6 @@ bool AEnemy::InTargetRange(AActor* Target, double Radius)
 {
 	if (Target == nullptr) return false;
 	const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
-	DRAW_SPHERE_SingleFrame(GetActorLocation());
-	DRAW_SPHERE_SingleFrame(Target->GetActorLocation());
 	return DistanceToTarget <= Radius;
 }
 
@@ -152,7 +150,19 @@ AActor* AEnemy::ChoosePatrolTarget()
 
 void AEnemy::PawnSeen(APawn* SeenPawn)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Pawn Seen!"));
+	if (EnemyState == EEnemyState::ESS_Chasing) return;
+	if (SeenPawn->ActorHasTag(FName("SlashCharacter")))
+	{
+		GetWorldTimerManager().ClearTimer(PatrolTimer);
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+		CombatTarget = SeenPawn;
+		
+		if (EnemyState != EEnemyState::ESS_Attacking)
+		{
+			EnemyState = EEnemyState::ESS_Chasing;
+			MoveToTarget(CombatTarget);
+		}
+	}
 }
 
 void AEnemy::PlayHitReactMontage(const FName& SectionName)
@@ -169,9 +179,14 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckCombatTarget();
-
-	CheckPatrolTarget();
+	if (EnemyState > EEnemyState::ESS_Patrolling)
+	{
+		CheckCombatTarget();
+	}
+	else
+	{
+		CheckPatrolTarget();
+	}
 
 }
 
@@ -189,11 +204,28 @@ void AEnemy::CheckCombatTarget()
 {
 	if (!InTargetRange(CombatTarget, CombatRadius))
 	{
+		// Outside combat radius, lose interest
 		CombatTarget = nullptr;
 		if (HealthBarWidget)
 		{
 			HealthBarWidget->SetVisibility(false);
 		}
+		EnemyState = EEnemyState::ESS_Patrolling;
+		GetCharacterMovement()->MaxWalkSpeed = 125.f;
+		MoveToTarget(PatrolTarget);
+	}
+	else if (!InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::ESS_Chasing)
+	{
+		// Outside attack range, chase character
+		EnemyState = EEnemyState::ESS_Chasing;
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+		MoveToTarget(CombatTarget);
+	}
+	else if (InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::ESS_Attacking)
+	{
+		// Inside attack range, attack character
+		EnemyState = EEnemyState::ESS_Attacking;
+		// TODO: Attack montage
 	}
 }
 
@@ -301,6 +333,9 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
 	}
 	CombatTarget = EventInstigator->GetPawn();
+	EnemyState = EEnemyState::ESS_Chasing;
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	MoveToTarget(CombatTarget);
 	return DamageAmount;
 }
 
