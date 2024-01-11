@@ -28,8 +28,6 @@ public:
 
 private:
 
-	
-
 	UPROPERTY(VisibleAnywhere)
 	UHealthBarComponent* HealthBarWidget;
 
@@ -74,6 +72,39 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AI Navigation")
 	float WaitMax = 10.f;
 
+	/** AI behavior */
+	void HideHealthBar();
+	void ShowHealthBar();
+	void LoseInterest();
+	void StartPatrolling();
+	void ChaseTarget();
+	bool IsOutsideCombatRadius();
+	bool IsOutsideAttackRadius();
+	bool IsInsideAttackRadius();
+	bool IsChasing();
+	bool IsAttacking();
+	bool IsDead();
+	bool IsEngaged();
+	void ClearPatrolTimer();
+
+	/** Combat */
+	void StartAttackTimer();
+	void ClearAttackTimer();
+
+	FTimerHandle AttackTimer;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	float AttackMin = 0.5f;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	float AttackMax = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	float PatrollingSpeed = 125.f;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	float ChasingSpeed = 300.f;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -83,6 +114,8 @@ protected:
 	AActor* ChoosePatrolTarget();
 	virtual void Attack() override;
 	virtual void PlayAttackMontage() override;
+	virtual bool CanAttack() override;
+	virtual void HandleDamage(float DamageAmount) override;
 
 	UFUNCTION()
 	void PawnSeen(APawn* SeenPawn);
@@ -91,7 +124,7 @@ protected:
 	EDeathPose DeathPose;
 
 	UPROPERTY(BlueprintReadOnly)
-	EEnemyState EnemyState = EEnemyState::ESS_Patrolling;
+	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
 
 public:	
 	
