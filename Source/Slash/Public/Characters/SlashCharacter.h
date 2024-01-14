@@ -24,7 +24,7 @@ class SLASH_API ASlashCharacter : public ABaseCharacter
 public:
 	ASlashCharacter();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 	
 
 protected:
@@ -54,6 +54,8 @@ protected:
 	virtual bool CanAttack() override;
 	bool CanDisarm();
 	bool CanArm();
+	void Disarm();
+	void Arm();
 	void PlayEquipMontage(const FName& SectionName);
 
 
