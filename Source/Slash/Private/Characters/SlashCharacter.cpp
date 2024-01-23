@@ -13,6 +13,8 @@
 #include "HUD/SlashHUD.h"
 #include "HUD/SlashOverlay.h"
 #include "Components/AttributeComponent.h"
+#include "Items/Soul.h"
+#include "Items/Treasure.h"
 
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
@@ -95,6 +97,29 @@ void ASlashCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* 
 	if (Attributes && Attributes->GetHealthPercent() > 0.f)
 	{
 		ActionState = EActionState::EAS_HitReaction;
+	}
+}
+
+void ASlashCharacter::SetOverlappingItem(AItem* Item)
+{
+	OverlappingItem = Item;
+}
+
+void ASlashCharacter::AddSouls(ASoul* Soul)
+{
+	if (Attributes && SlashOverlay)
+	{
+		Attributes->AddSouls(Soul->GetSouls());
+		SlashOverlay->SetSouls(Attributes->GetSouls());
+	}
+}
+
+void ASlashCharacter::AddGold(ATreasure* Treasure)
+{
+	if (Attributes && SlashOverlay)
+	{
+		Attributes->AddGold(Treasure->GetGold());
+		SlashOverlay->SetGold(Attributes->GetGold());
 	}
 }
 
