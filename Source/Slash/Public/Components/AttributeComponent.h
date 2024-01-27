@@ -16,6 +16,7 @@ public:
 	UAttributeComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void RegenStamina(float DeltaTime);
+	void RegenHealth(float Amount);
 
 protected:
 	virtual void BeginPlay() override;
@@ -46,7 +47,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
 	float StaminaRegenRate = 8.f;
-		
+
+	UPROPERTY()
+	float HealthRegenAmount;
+	
 public:
 	void ReceiveDamage(float Damage);
 	void UseStamina(float StaminaCost);

@@ -121,6 +121,8 @@ void ASlashCharacter::AddSouls(ASoul* Soul)
 	{
 		Attributes->AddSouls(Soul->GetSouls());
 		SlashOverlay->SetSouls(Attributes->GetSouls());
+		Attributes->RegenHealth(Soul->GetSoulHealthPoints());
+		SlashOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
 	}
 }
 
@@ -205,6 +207,10 @@ void ASlashCharacter::EKeyPressed()
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	if (OverlappingWeapon)
 	{
+		if (EquippedWeapon)
+		{
+			EquippedWeapon->Destroy();
+		}
 		EquipWeapon(OverlappingWeapon);
 	}
 	else

@@ -63,3 +63,8 @@ void UAttributeComponent::RegenStamina(float DeltaTime)
 	Stamina = FMath::Clamp(Stamina + StaminaRegenRate * DeltaTime, 0.f, MaxStamina);
 }
 
+void UAttributeComponent::RegenHealth(float Amount)
+{
+	Health = FMath::Clamp(Health + Amount, 0.f, MaxHealth);
+}
+
