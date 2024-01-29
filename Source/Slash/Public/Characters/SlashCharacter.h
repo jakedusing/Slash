@@ -46,9 +46,25 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* MovementAction;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* LookAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* JumpAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* EKeyAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* AttackAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* DodgeAction;
+
 	/** Callbacks for input */
 
 	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
